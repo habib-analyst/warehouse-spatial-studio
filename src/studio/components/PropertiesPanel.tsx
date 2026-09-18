@@ -9,7 +9,7 @@ function Numeric({ label, field, node }: { label: string; field: keyof StudioNod
 }
 
 export function PropertiesPanel() {
-  const { document, selectedId, updateNode, duplicateNode, deleteNode, selectNode } = useStudioStore()
+  const { document, selectedId, updateNode, duplicateNode, deleteNode, selectNode, setRightTab } = useStudioStore()
   const node = document.nodes[selectedId] ?? document.nodes[document.rootId]
   const path = ancestorsOf(document, node.id).map((item) => item.code).join(" › ")
   const title = `${NODE_LABELS[node.type]} properties`
@@ -17,7 +17,7 @@ export function PropertiesPanel() {
     <section className="properties-panel">
       <header>
         <div><h2>{title}</h2><p>Selected <strong>{node.code}</strong></p></div>
-        <button className="icon-button" aria-label="Close properties" onClick={() => selectNode(document.rootId)}><X size={15} /></button>
+        <button className="icon-button" aria-label="Close properties" onClick={() => setRightTab("closed")}><X size={15} /></button>
       </header>
       <div className="property-scroll">
         <p className="property-path">{path}</p>

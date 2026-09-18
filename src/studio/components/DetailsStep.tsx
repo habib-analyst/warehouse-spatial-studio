@@ -1,5 +1,11 @@
-import { AlertTriangle, CheckCircle2, Copy, MapPin, UserRound, Warehouse } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Copy, MapPin, UserRound, Warehouse, LucideIcon } from "lucide-react"
+import { useState } from "react"
 import { useStudioStore } from "../store"
+
+function Panel({ title, icon: Icon, children, initiallyOpen = false }: { title: string; icon: LucideIcon; children: React.ReactNode; initiallyOpen?: boolean }) {
+  const [open, setOpen] = useState(initiallyOpen)
+  return <section className={`config-panel ${open ? "" : "collapsed"}`}><header onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}><Icon size={16} /><h3>{title}</h3><span style={{ transform: open ? "none" : "rotate(180deg)", transition: "transform 0.2s" }}>⌃</span></header>{open && <div className="config-body">{children}</div>}</section>
+}
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 const ID_CHAIN = [
@@ -31,53 +37,42 @@ export function DetailsStep() {
           </div>
         </header>
 
-        <section className="config-panel">
-          <header><Warehouse size={16} /><h3>Basic information</h3><span>⌃</span></header>
-          <div className="config-body">
-            <label className="field full"><span>Warehouse name</span><input value={profile.name} onChange={(e) => updateProfile({ name: e.target.value })} /></label>
+        <Panel title="Basic information" icon={Warehouse} initiallyOpen={true}>
+            <label className="field full"><span>Warehouse name</span><input value={profile.name} placeholder="e.g. Houston Main Distribution Center" onChange={(e) => updateProfile({ name: e.target.value })} /></label>
             <label className="field full">
               <span>Warehouse code</span>
               <div className="code-available-row">
-                <input className="code-input" value={profile.code} onChange={(e) => updateProfile({ code: e.target.value.toUpperCase() })} />
+                <input className="code-input" value={profile.code} placeholder="e.g. WH01" onChange={(e) => updateProfile({ code: e.target.value.toUpperCase() })} />
                 <em>Available</em>
               </div>
               <small className="field-hint">Used in every location ID. Editable until inventory is assigned.</small>
             </label>
             <div className="field-grid two">
-              <label className="field"><span>Warehouse role</span><select value={profile.role} onChange={(e) => updateProfile({ role: e.target.value })}><option>Auto parts distribution</option><option>Bulk storage</option><option>Cross-dock</option></select></label>
-              <label className="field"><span>Status</span><select value={profile.status} onChange={(e) => updateProfile({ status: e.target.value })}><option>Planning</option><option>Active</option><option>Draft</option></select></label>
+              <label className="field"><span>Warehouse role</span><select value={profile.role} onChange={(e) => updateProfile({ role: e.target.value })}><option value="">Select role</option><option>Auto parts distribution</option><option>Bulk storage</option><option>Cross-dock</option></select></label>
+              <label className="field"><span>Status</span><select value={profile.status} onChange={(e) => updateProfile({ status: e.target.value })}><option value="">Select status</option><option>Planning</option><option>Active</option><option>Draft</option></select></label>
             </div>
-          </div>
-        </section>
+        </Panel>
 
-        <section className="config-panel">
-          <header><MapPin size={16} /><h3>Address</h3><span>⌃</span></header>
-          <div className="config-body">
+        <Panel title="Address" icon={MapPin}>
             <div className="field-grid two">
-              <label className="field"><span>Country</span><select value={profile.country} onChange={(e) => updateProfile({ country: e.target.value })}><option>United States</option><option>Canada</option></select></label>
-              <label className="field"><span>State</span><select value={profile.state} onChange={(e) => updateProfile({ state: e.target.value })}><option>Texas</option><option>California</option><option>Florida</option></select></label>
-              <label className="field"><span>City</span><input value={profile.city} onChange={(e) => updateProfile({ city: e.target.value })} /></label>
-              <label className="field"><span>ZIP code</span><input value={profile.zip} onChange={(e) => updateProfile({ zip: e.target.value })} /></label>
+              <label className="field"><span>Country</span><select value={profile.country} onChange={(e) => updateProfile({ country: e.target.value })}><option value="">Select country</option><option>United States</option><option>Canada</option></select></label>
+              <label className="field"><span>State</span><select value={profile.state} onChange={(e) => updateProfile({ state: e.target.value })}><option value="">Select state</option><option>Texas</option><option>California</option><option>Florida</option></select></label>
+              <label className="field"><span>City</span><input value={profile.city} placeholder="e.g. Houston" onChange={(e) => updateProfile({ city: e.target.value })} /></label>
+              <label className="field"><span>ZIP code</span><input value={profile.zip} placeholder="e.g. 77001" onChange={(e) => updateProfile({ zip: e.target.value })} /></label>
             </div>
-            <label className="field full"><span>Street address</span><input value={profile.street} onChange={(e) => updateProfile({ street: e.target.value })} /></label>
-            <label className="field full"><span>Time zone</span><select value={profile.timezone} onChange={(e) => updateProfile({ timezone: e.target.value })}><option>America/Chicago (UTC-05:00)</option><option>America/New_York (UTC-04:00)</option><option>America/Los_Angeles (UTC-07:00)</option></select></label>
-          </div>
-        </section>
+            <label className="field full"><span>Street address</span><input value={profile.street} placeholder="e.g. 1450 Industrial Parkway" onChange={(e) => updateProfile({ street: e.target.value })} /></label>
+            <label className="field full"><span>Time zone</span><select value={profile.timezone} onChange={(e) => updateProfile({ timezone: e.target.value })}><option value="">Select time zone</option><option>America/Chicago (UTC-05:00)</option><option>America/New_York (UTC-04:00)</option><option>America/Los_Angeles (UTC-07:00)</option></select></label>
+        </Panel>
 
-        <section className="config-panel">
-          <header><UserRound size={16} /><h3>Primary contact</h3><span>⌃</span></header>
-          <div className="config-body">
-            <label className="field full"><span>Warehouse manager</span><select value={profile.manager} onChange={(e) => updateProfile({ manager: e.target.value })}><option>Michael Torres</option><option>Sara Khan</option><option>James Lee</option></select></label>
+        <Panel title="Primary contact" icon={UserRound}>
+            <label className="field full"><span>Warehouse manager</span><select value={profile.manager} onChange={(e) => updateProfile({ manager: e.target.value })}><option value="">Select manager</option><option>Michael Torres</option><option>Sara Khan</option><option>James Lee</option></select></label>
             <div className="field-grid two">
-              <label className="field"><span>Phone</span><input value={profile.phone} onChange={(e) => updateProfile({ phone: e.target.value })} /></label>
-              <label className="field"><span>Email</span><input value={profile.email} onChange={(e) => updateProfile({ email: e.target.value })} /></label>
+              <label className="field"><span>Phone</span><input value={profile.phone} placeholder="e.g. +1 (555) 000-0000" onChange={(e) => updateProfile({ phone: e.target.value })} /></label>
+              <label className="field"><span>Email</span><input value={profile.email} placeholder="e.g. manager@company.com" onChange={(e) => updateProfile({ email: e.target.value })} /></label>
             </div>
-          </div>
-        </section>
+        </Panel>
 
-        <section className="config-panel">
-          <header><CheckCircle2 size={16} /><h3>Operating defaults</h3><span>⌃</span></header>
-          <div className="config-body">
+        <Panel title="Operating defaults" icon={CheckCircle2}>
             <div className="field full"><span>Operating days</span><div className="day-row">{DAYS.map((day) => <button key={day} type="button" className={profile.days.includes(day) ? "day on" : "day"} onClick={() => toggleDay(day)}>{day}</button>)}</div></div>
             <div className="field-grid three">
               <label className="field"><span>Opens at</span><input type="time" value={profile.opensAt} onChange={(e) => updateProfile({ opensAt: e.target.value })} /></label>
@@ -88,8 +83,7 @@ export function DetailsStep() {
               <div className="field"><span>Measurement system</span><div className="choice-row"><button type="button" className={profile.measurement === "Imperial" ? "choice active" : "choice"} onClick={() => updateProfile({ measurement: "Imperial" })}>Imperial</button><button type="button" className={profile.measurement === "Metric" ? "choice active" : "choice"} onClick={() => updateProfile({ measurement: "Metric" })}>Metric</button></div></div>
               <label className="field"><span>Weight unit</span><select value={profile.weightUnit} onChange={(e) => updateProfile({ weightUnit: e.target.value })}><option>lb</option><option>kg</option></select></label>
             </div>
-          </div>
-        </section>
+        </Panel>
       </section>
 
       <aside className="details-preview-column">

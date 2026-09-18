@@ -4,8 +4,8 @@ import { useStudioStore } from "../store"
 type Props = {
   label: string
   fieldKey: string
-  valueFeet: number
-  onChangeFeet: (value: number) => void
+  valueFeet: number | ""
+  onChangeFeet: (value: number | "") => void
 }
 
 export function MeasurementField({ label, fieldKey, valueFeet, onChangeFeet }: Props) {
@@ -19,8 +19,8 @@ export function MeasurementField({ label, fieldKey, valueFeet, onChangeFeet }: P
         type="number"
         min="0"
         step="any"
-        value={formatMeasurement(valueFeet, unit)}
-        onChange={(event) => onChangeFeet(Math.max(0, convertToFeet(Number(event.target.value), unit)))}
+        value={valueFeet === "" ? "" : formatMeasurement(valueFeet, unit)}
+        onChange={(event) => onChangeFeet(event.target.value === "" ? "" : Math.max(0, convertToFeet(Number(event.target.value), unit)))}
       />
       {measurementMode === "manual" ? (
         <select aria-label={`${label} unit`} value={unit} onChange={(event) => setFieldUnit(fieldKey, event.target.value as MeasurementUnit)}>
@@ -33,8 +33,7 @@ export function MeasurementField({ label, fieldKey, valueFeet, onChangeFeet }: P
 
 export function MeasurementControls() {
   const { measurementMode, globalUnit, setMeasurementMode, setGlobalUnit } = useStudioStore()
-  return <section className="measurement-controls" aria-label="Measurement system">
-    <div><strong>Measurement system</strong><small>Stored precisely in canonical feet</small></div>
+  return <div className="measurement-controls-body">
     <div className="measurement-mode">
       <button className={measurementMode === "global" ? "active" : ""} onClick={() => setMeasurementMode("global")}>One unit</button>
       <button className={measurementMode === "manual" ? "active" : ""} onClick={() => setMeasurementMode("manual")}>Per field</button>
@@ -42,5 +41,5 @@ export function MeasurementControls() {
     <select aria-label="Global measurement unit" value={globalUnit} onChange={(event) => setGlobalUnit(event.target.value as MeasurementUnit)}>
       {MEASUREMENT_UNITS.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
     </select>
-  </section>
+  </div>
 }

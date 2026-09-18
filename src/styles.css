@@ -64,10 +64,13 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .tiny-check { width: 14px; height: 14px; display: inline-grid; place-items: center; border: 1px solid #b8c7da; border-radius: 3px; color: #fff; }
 .toggle-button.on .tiny-check { border-color: var(--blue); background: var(--blue); }
 
-.studio-workspace { min-height: 0; flex: 1; display: grid; grid-template-columns: minmax(330px, 390px) minmax(470px, 1fr) 330px; overflow: hidden; }
+.studio-workspace { position: relative; min-height: 0; flex: 1; display: grid; grid-template-columns: minmax(330px, 390px) minmax(470px, 1fr); overflow: hidden; }
+.studio-workspace.left-collapsed { grid-template-columns: 48px minmax(470px, 1fr); }
+.library-panel-toggle { height: 48px; flex: 0 0 48px; display: grid; place-items: center; cursor: pointer; border-bottom: 1px solid var(--line); color: var(--blue); background: #fbfdff; }
+.library-panel-toggle:hover { background: #eef5fd; }
 .library-panel, .properties-panel, .inspector-panel { min-height: 0; display: flex; flex-direction: column; background: #fff; }
 .library-panel { border-right: 1px solid var(--line); }
-.inspector-panel { border-left: 1px solid var(--line); overflow: hidden; }
+.inspector-panel { position: absolute; right: 20px; top: 20px; bottom: 20px; width: 330px; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 4px 16px rgba(16, 36, 71, 0.1); overflow: hidden; z-index: 10; }
 .properties-panel { flex: 1; overflow: hidden; }
 .inspector-tabs { flex: 0 0 35px; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-bottom: 1px solid var(--line); background: #f5f8fc; }
 .inspector-tabs button { display:flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:5px;color:#718097;background:transparent;font-size:9px;font-weight:600; }

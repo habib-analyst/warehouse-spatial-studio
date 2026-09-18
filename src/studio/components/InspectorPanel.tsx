@@ -5,6 +5,7 @@ import { PropertiesPanel } from "./PropertiesPanel"
 
 export function InspectorPanel() {
   const { rightTab, setRightTab } = useStudioStore()
+  if (rightTab === "closed") return null
   return <aside className="inspector-panel">
     <div className="inspector-tabs">
       <button aria-label="Properties inspector" className={rightTab === "properties" ? "active" : ""} onClick={() => setRightTab("properties")}><SlidersHorizontal size={13} />Properties</button>

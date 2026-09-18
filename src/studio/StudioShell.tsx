@@ -5,17 +5,16 @@ import { DetailsStep } from "./components/DetailsStep"
 import { LibraryPanel } from "./components/LibraryPanel"
 import { InspectorPanel } from "./components/InspectorPanel"
 import { ReviewStep } from "./components/ReviewStep"
-import { StudioHeader } from "./components/StudioHeader"
-import { CreateProgress, ScopeStrip, StepContextHeader } from "./components/CreateStepChrome"
+import { CreateProgress } from "./components/CreateStepChrome"
 import { useStudioStore } from "./store"
 
 const Scene3D = lazy(() => import("./scene/Scene3D").then((module) => ({ default: module.Scene3D })))
 
 export function StudioShell() {
   const [fitToken, setFitToken] = useState(0)
-  const { document, viewMode, wizardStep, notice, selectedId, deleteNode, fitRequest, seedDefaultIfNeeded } = useStudioStore()
+  const { document, viewMode, wizardStep, notice, selectedId, deleteNode, fitRequest, seedDefaultIfNeeded, leftSidebarOpen } = useStudioStore()
   const empty = Object.keys(document.nodes).length === 1
-  const spatial = wizardStep >= 2 && wizardStep <= 4
+  const spatial = wizardStep === 2
 
   useEffect(() => {
     if (wizardStep >= 2) seedDefaultIfNeeded()
@@ -44,13 +43,12 @@ export function StudioShell() {
     <section className="studio-card" aria-label="Warehouse Spatial Studio">
       <CreateProgress />
       {wizardStep === 1 && <DetailsStep />}
-      {wizardStep === 5 && <ReviewStep />}
+      {wizardStep === 3 && <ReviewStep />}
       {spatial && <>
-        <div className="step-heading-row"><StepContextHeader /><StudioHeader /></div>
-        <div className="step-toolbar-row"><ScopeStrip /><ContextToolbar /></div>
-        <div className="studio-workspace">
+        <div className={`studio-workspace ${leftSidebarOpen ? "" : "left-collapsed"}`}>
           <LibraryPanel />
           <section className="canvas-column">
+            <ContextToolbar />
             {viewMode === "2d" ? (
               <Canvas2D fitToken={fitToken} />
             ) : (
@@ -58,7 +56,6 @@ export function StudioShell() {
                 <Scene3D />
               </Suspense>
             )}
-            <div className="canvas-mode-badge">{viewMode.toUpperCase()} · Warehouse → Bin</div>
             {empty && <div className="empty-canvas-callout">Empty warehouse — add a hall or room to begin</div>}
             {notice && <div className={`studio-notice ${notice.tone}`}>{notice.message}</div>}
           </section>

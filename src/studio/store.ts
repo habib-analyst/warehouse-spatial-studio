@@ -10,7 +10,7 @@ import { defaultProfile, type WarehouseProfile } from "./profile"
 type Notice = { tone: "error" | "success" | "info"; message: string }
 type Toggles = { snap: boolean; grid: boolean; labels: boolean; dimensions: boolean; faces: boolean; routes: boolean }
 type StorageLayoutOptions = { aisles: number; racks: number; shelves: number; bins: number; rackWidth?: number; rackDepth?: number; rackHeight?: number; faces?: 1 | 2 }
-export type WizardStep = 1 | 2 | 3 | 4 | 5
+export type WizardStep = 1 | 2 | 3
 
 type StudioState = {
   document: StudioDocument
@@ -21,7 +21,8 @@ type StudioState = {
   viewMode: ViewMode
   tool: ToolMode
   leftTab: "library" | "hierarchy"
-  rightTab: "properties" | "tree"
+  leftSidebarOpen: boolean
+  rightTab: "properties" | "tree" | "closed"
   measurementMode: MeasurementMode
   globalUnit: MeasurementUnit
   fieldUnits: Record<string, MeasurementUnit>
@@ -39,7 +40,8 @@ type StudioState = {
   setViewMode: (mode: ViewMode) => void
   setTool: (tool: ToolMode) => void
   setLeftTab: (tab: "library" | "hierarchy") => void
-  setRightTab: (tab: "properties" | "tree") => void
+  setLeftSidebarOpen: (open: boolean) => void
+  setRightTab: (tab: "properties" | "tree" | "closed") => void
   setMeasurementMode: (mode: MeasurementMode) => void
   setGlobalUnit: (unit: MeasurementUnit) => void
   setFieldUnit: (field: string, unit: MeasurementUnit) => void
@@ -101,7 +103,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   viewMode: "2d",
   tool: "select",
   leftTab: "library",
-  rightTab: "properties",
+  leftSidebarOpen: true,
+  rightTab: "closed",
   measurementMode: "global",
   globalUnit: "ft",
   fieldUnits: {},
@@ -116,15 +119,16 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   notice: null,
   setWizardStep: (wizardStep) => set({
     wizardStep,
-    studioMode: wizardStep === 3 ? "storage" : wizardStep === 4 ? "layout" : wizardStep === 2 ? "building" : get().studioMode,
+    studioMode: wizardStep === 2 ? "building" : get().studioMode,
   }),
   setStudioMode: (studioMode) => set({
     studioMode,
-    wizardStep: studioMode === "building" ? 2 : studioMode === "storage" ? 3 : 4,
+    wizardStep: studioMode === "building" ? 2 : 2,
   }),
   setViewMode: (viewMode) => set({ viewMode }),
   setTool: (tool) => set({ tool }),
   setLeftTab: (leftTab) => set({ leftTab }),
+  setLeftSidebarOpen: (leftSidebarOpen) => set({ leftSidebarOpen }),
   setRightTab: (rightTab) => set({ rightTab }),
   setMeasurementMode: (measurementMode) => set({ measurementMode }),
   setGlobalUnit: (globalUnit) => set({ globalUnit }),
@@ -404,19 +408,6 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     notice: { tone: "info", message: "Warehouse cleared — build from scratch, or continue to reload defaults." },
   })),
   seedDefaultIfNeeded: () => {
-    if (typeof process !== "undefined" && process.env.VITEST) return
-    const state = get()
-    if (Object.keys(state.document.nodes).length > 1) return
-    window.setTimeout(() => {
-      const latest = get()
-      if (Object.keys(latest.document.nodes).length > 1) return
-      set({
-        document: getDefaultDocument(),
-        selectedId: "warehouse-root",
-        scopeId: "warehouse-root",
-        fitRequest: latest.fitRequest + 1,
-        notice: null,
-      })
-    }, 0)
+    // Disabled to allow testing the empty state flows
   },
 }))
