@@ -5,8 +5,8 @@ Standalone prototype for a Create Warehouse Spatial Studio: 2D/3D canvas, hierar
 ## Quick start
 
 ```bash
-git clone https://github.com/habib-analyst/warehouse-spatial-studio.git
-cd warehouse-spatial-studio
+git clone https://github.com/nasirshaharyar1-dot/warehouse-canvas.git
+cd warehouse-canvas
 npm install
 npm run dev
 ```
